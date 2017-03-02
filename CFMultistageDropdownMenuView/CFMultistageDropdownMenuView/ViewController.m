@@ -10,7 +10,7 @@
 #import "CFMacro.h"
 #import "CFMultistageDropdownMenuView.h"
 
-@interface ViewController ()
+@interface ViewController () <CFMultistageDropdownMenuViewDelegate>
 
 /* CFMultistageDropdownMenuView */
 @property (nonatomic, strong) CFMultistageDropdownMenuView *multistageDropdownMenuView;
@@ -23,7 +23,7 @@
     [super viewDidLoad];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
-    self.view.backgroundColor = [UIColor lightGrayColor];
+    self.view.backgroundColor = [UIColor purpleColor];
     
     // 配置展示结果talbeview
 //    [self.view addSubview:self.showTableView];
@@ -95,87 +95,93 @@
                           
                           ];
     
-    [_multistageDropdownMenuView setupLeftArray:leftArr rightArray:rightArr];
+    [_multistageDropdownMenuView setupDataSourceLeftArray:leftArr rightArray:rightArr];
     
-//    _multistageDropdownMenuView.delegate = self;
-//    
-//    // 下拉列表 起始y    
+    _multistageDropdownMenuView.delegate = self;
+    
+    // 下拉列表 起始y
     _multistageDropdownMenuView.startY = CGRectGetMaxY(_multistageDropdownMenuView.frame);
     
-    /**
-     *  回调方式一: block
-     */
-//    __weak typeof(self) weakSelf = self;
-//    _multistageDropdownMenuView.chooseConditionBlock = ^(NSString *currentTitle, NSArray *currentTitleArray){
-//        /**
-//         实际开发情况 --- 仅需要拿到currentTitle / currentTitleArray 作为参数 向服务器请求数据即可
-//         */
-//        NSMutableString *totalTitleStr = [[NSMutableString alloc] init];
-//        NSMutableString *totalStr = [[NSMutableString alloc] init];
-//        for (NSInteger i = 0; i < currentTitleArray.count; i++) {
-//            if (!([currentTitleArray[i] isEqualToString:@"工作岗位"]
-//                  || [currentTitleArray[i] isEqualToString:@"薪资"] || [currentTitleArray[i] isEqualToString:@"工作经验"])) {
-//                [totalStr appendString:currentTitleArray[i]];
-//            }
-//            
-//            if (0 == i) {
-//                [totalTitleStr appendString:@"("];
-//            }
-//            [totalTitleStr appendString:currentTitleArray[i]];
-//            if (i == currentTitleArray.count-1) {
-//                [totalTitleStr appendString:@")"];
-//                break ;
-//            }
-//            [totalTitleStr appendString:@"---"];
-//            
-//        }
-//        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"职位筛选信息" message:[NSString stringWithFormat:@"您当前选中的是\n(%@)\n 当前所有展示的是\n%@", currentTitle, totalTitleStr] preferredStyle:UIAlertControllerStyleAlert];
-//        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//            // 匹配数据源
-//            NSString *totalString = totalStr;
-//            // 如果筛选条件包含全部, 则截取掉
-//            if ([totalStr containsString:@"全部"]) {
-//                totalString = [totalStr stringByReplacingOccurrencesOfString:@"全部" withString:@""];
-//            }
-//            NSLog(@"totalString  %@", totalString);
-//            if (totalString.length != 0) {  // 条件 只是  全部
-//                NSArray *allDataSourceArr = weakSelf.allDataSourceArr;
-//                NSMutableArray *tempArr = [[NSMutableArray alloc] init];
-//                for (NSInteger i = 0; i < allDataSourceArr.count; i++) {
-//                    NSString *str = allDataSourceArr[i];
-//                    str = [str stringByReplacingOccurrencesOfString:@" " withString:@""];
-//                    
-//                    if ([str containsString:totalString]) {
-//                        [tempArr addObject:allDataSourceArr[i]];
-//                    }
-//                }
-//                // 赋值筛选后的数据源
-//                weakSelf.dataSourceArr = tempArr;
-//                NSLog(@"筛选后数据源  %@", weakSelf.dataSourceArr);
-//                
-//                // 重新刷新表格  --  显示刷新后的数据
-//                [weakSelf.showTableView reloadData];
-//            }
-//            
-//            
-//            UIAlertController *alertController2 = [UIAlertController alertControllerWithTitle:@"" message:[NSString stringWithFormat:@"共有 %zd 条结果", weakSelf.dataSourceArr.count] preferredStyle:UIAlertControllerStyleAlert];
-//            [weakSelf presentViewController:alertController2 animated:NO completion:^{
-//                UIAlertAction *alertAction2 = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//                }];
-//                [alertController2 addAction:alertAction2];
-//            }];
-//            
-//        }];
-//        [alertController addAction:alertAction];
-//        [weakSelf presentViewController:alertController animated:NO completion:^{
-//        }];
-//    };
+//    _multistageDropdownMenuView.maxRowCount = 3;
+    
+
     
     
     return _multistageDropdownMenuView;
     
 }
 
+#pragma mark - CFMultistageDropdownMenuViewDelegate
+- (void)multistageDropdownMenuView:(CFMultistageDropdownMenuView *)multistageDropdownMenuView selecteTitleButtonIndex:(NSInteger)titleButtonIndex conditionLeftIndex:(NSInteger)leftIndex conditionRightIndex:(NSInteger)rightIndex
+{
+    
+    
+    NSString *str = [NSString stringWithFormat:@"(都是从0开始)\n 当前选中是 第%zd个title按钮, 一级条件索引是%zd,  二级条件索引是%zd",titleButtonIndex, leftIndex, rightIndex];
+    
+    NSString *titleStr = [multistageDropdownMenuView.defaulTitleArray objectAtIndex:titleButtonIndex];
+    NSArray *leftArr = [multistageDropdownMenuView.dataSourceLeftArray objectAtIndex:titleButtonIndex];
+    NSArray *rightArr = [multistageDropdownMenuView.dataSourceRightArray objectAtIndex:titleButtonIndex];
+    NSString *leftStr = @"";
+    NSString *rightStr = @"";
+    NSString *str2 = @"";
+    if (leftArr.count>0) { // 二级菜单
+        leftStr = [leftArr objectAtIndex:leftIndex];
+        NSArray *arr = [rightArr objectAtIndex:leftIndex];
+        rightStr = [arr objectAtIndex:rightIndex];
+        str2 = [NSString stringWithFormat:@"当前选中的是 \"%@\" 分类下的 \"%@\"-\"%@\"", titleStr, leftStr, rightStr];
+    } else {
+        rightStr = [rightArr[0] objectAtIndex:rightIndex];
+        str2 = [NSString stringWithFormat:@"当前选中的是 \"%@\" 分类下的 \"%@\"", titleStr, rightStr];
+    }
+    
+    NSMutableString *mStr22 = [NSMutableString stringWithFormat:@" "];
+    NSArray *btnArr = multistageDropdownMenuView.titleButtonArray;
+    for (UIButton *btn in btnArr) {
+        [mStr22 appendString:[NSString stringWithFormat:@"\"%@\"", btn.titleLabel.text]];
+        [mStr22 appendString:@" "];
+    }
+    NSString *str22 = [NSString stringWithFormat:@"当前展示的所有条件是:\n (%@)", mStr22];
+   
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"注: 当下拉菜单选项为一级菜单时, 一级条件索引肯定是0" message:str preferredStyle:UIAlertControllerStyleAlert];
+    [self presentViewController:alertController animated:NO completion:^{
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            UIAlertController *alertController2 = [UIAlertController alertControllerWithTitle:str22 message:str2 preferredStyle:UIAlertControllerStyleAlert];
+            [self presentViewController:alertController2 animated:NO completion:^{
+                UIAlertAction *alertAction2 = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+             
+                }];
+                [alertController2 addAction:alertAction2];
+            }];
+            
+        }];
+       [alertController addAction:alertAction];
+    }];
+
+  
+}
+
+- (void)multistageDropdownMenuView:(CFMultistageDropdownMenuView *)multistageDropdownMenuView selectTitleButtonWithCurrentTitle:(NSString *)currentTitle currentTitleArray:(NSArray *)currentTitleArray
+{
+    NSMutableString *mStr = [NSMutableString stringWithFormat:@" "];
+    
+    for (NSString *str in currentTitleArray) {
+        [mStr appendString:[NSString stringWithFormat:@"\"%@\"", str]];
+        [mStr appendString:@" "];
+    }
+    NSString *str = [NSString stringWithFormat:@"当前选中的是 \"%@\" \n 当前展示的所有条件是:\n (%@)",currentTitle, mStr];
+    
+
+     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"第二几个代理方法" message:str preferredStyle:UIAlertControllerStyleAlert];
+    [self presentViewController:alertController animated:NO completion:^{
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            
+        }];
+        [alertController addAction:alertAction];
+    }];
+}
 
 
 - (void)didReceiveMemoryWarning {

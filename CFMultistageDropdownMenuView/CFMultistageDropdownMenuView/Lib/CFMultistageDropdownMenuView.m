@@ -15,10 +15,10 @@
 #define kViewTagAdd 999  // 所有tag都加上这个 防止出现为0的tag
 
 @interface CFMultistageDropdownMenuView () <CFMultistageConditionTableViewDelegate>
+
 /* 分类 titleBar */
 @property (nonatomic, strong) UIView *titleBar;
-/* 分类按钮 数组 */
-@property (nonatomic, strong) NSMutableArray *titleButtonArray;
+
 /** 数据源--一维数组 (每一列的条件标题) */
 @property (nonatomic, strong) NSArray *showTitleArray;
 
@@ -30,19 +30,22 @@
  */
 @property (nonatomic, strong) CFMultistageConditionTableView *multistageConditionTableView;
 
-/**
- *  数据源--二维数组
- *  一级列表数据源
- */
-@property (nonatomic, strong) NSMutableArray *dataSourceLeftArray;
-/**
- *  数据源--二维数组
- *  二级列表数据源
- */
-@property (nonatomic, strong) NSMutableArray *dataSourceRightArray;
+
 /* 最后点击的按钮 */
 @property (nonatomic, strong) UIButton *lastClickedButton;
+
+/* 
+ * 选中的条件  左 右 索引数组
+ * @[@"3-0", @"0-0", @"0-0"]
+ */
+@property (nonatomic, strong) NSMutableArray *selectedConditionIndexArray;
+
+/* titleBar上 当前选中按钮的 索引 */
+@property (nonatomic, assign) NSInteger currentSelectedTitleButtonIndex;
+
 @end
+
+#define titleBarHeight 45
 
 @implementation CFMultistageDropdownMenuView
 
@@ -60,7 +63,7 @@
 - (UIView *)titleBar
 {
     if (!_titleBar) {
-        _titleBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CFScreenWidth, 45)];
+        _titleBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CFScreenWidth, titleBarHeight)];
         _titleBar.backgroundColor = [UIColor whiteColor];
     }
     return _titleBar;
@@ -69,12 +72,13 @@
 - (UIView *)backgroundView
 {
     if (!_backgroundView) {
-        _backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, self.startY?:45, CFScreenWidth, CFScreenHeight)];
+        _backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, self.startY?:titleBarHeight, CFScreenWidth, CFScreenHeight)];
         _backgroundView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
         
         
         UITapGestureRecognizer *tapGest = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hide)];
         [_backgroundView addGestureRecognizer:tapGest];
+
     }
     return _backgroundView;
 }
@@ -82,35 +86,40 @@
 - (CFMultistageConditionTableView *)multistageConditionTableView
 {
     if (!_multistageConditionTableView) {
-        _multistageConditionTableView = [[CFMultistageConditionTableView alloc] initWithFrame:CGRectMake(0, self.startY?:45, CFScreenWidth, 0)];
+        _multistageConditionTableView = [[CFMultistageConditionTableView alloc] initWithFrame:CGRectMake(0, self.startY?:titleBarHeight, CFScreenWidth, 0)];
         
-        _multistageConditionTableView.backgroundColor = [UIColor whiteColor];
         
         _multistageConditionTableView.delegate = self;
         
         _multistageConditionTableView.dataSourceLeftArray = self.dataSourceLeftArray;
         _multistageConditionTableView.dataSourceRightArray = self.dataSourceRightArray;
         
+        _multistageConditionTableView.maxRowCount = self.maxRowCount;
+        
     }
     return _multistageConditionTableView;
 }
 
 #pragma mark - setter
+- (void)setDefaultSelectedTitleButtonIndex:(NSInteger)defaultSelectedTitleButtonIndex
+{
+    _defaultSelectedTitleButtonIndex = defaultSelectedTitleButtonIndex;
+    
+    _selectedConditionIndexArray[self.defaultSelectedTitleButtonIndex] = [NSString stringWithFormat:@"%zd-0", defaultSelectedTitleButtonIndex];
+}
+
 - (void)setDefaulTitleArray:(NSArray *)defaulTitleArray
 {
     _defaulTitleArray = defaulTitleArray;
     
     [self setupTitleBarWithDefaulTitleArray:defaulTitleArray];
-    
-    
 
 }
 
-- (void)setupLeftArray:(NSArray *)leftArray rightArray:(NSArray *)rightArray
+- (void)setupDataSourceLeftArray:(NSArray *)leftArray rightArray:(NSArray *)rightArray
 {
     _dataSourceLeftArray = leftArray.mutableCopy;
     _dataSourceRightArray = rightArray.mutableCopy;
-    
     
 }
 
@@ -120,6 +129,9 @@
     
     CGFloat btnW = CFScreenWidth/defaulTitleArray.count;
     CGFloat btnH = 45;
+    
+    // 选中的条件  左 右 索引数组
+    self.selectedConditionIndexArray = [NSMutableArray arrayWithCapacity:defaulTitleArray.count];
     
     for (NSInteger i=0; i<defaulTitleArray.count; i++) {
         
@@ -132,6 +144,9 @@
         [self.titleBar addSubview:titleBtn];
         
         [self.titleButtonArray addObject:titleBtn];  // 分类 按钮数组
+        
+        // 选中的条件  左 右 索引数组  初始为@[@"0-0", @"0-0", @"0-0"]
+        [self.selectedConditionIndexArray addObject:@"0-0"];
     }
     
     // 中间分割竖线
@@ -144,17 +159,65 @@
     }
 }
 #pragma mark - CFMultistageConditionTableViewDelegate
-- (void)selecteLeftIndex:(NSInteger)leftIndex right:(NSInteger)rightIndex
+// 最终选中
+- (void)selecteWithLeftIndex:(NSInteger)leftIndex right:(NSInteger)rightIndex
 {
-    NSString *index = [NSString stringWithFormat:@"%zd-%zd", leftIndex, rightIndex];
+    [self hide];
     
-    NSLog(@"index...---%@", index);
-//    NSLog(@"_buttonSelectedIndex...%zd", _buttonSelectedIndex);
+    NSString *indexStr = [NSString stringWithFormat:@"%zd-%zd", leftIndex, rightIndex];
     
-//    NSLog(@"_buttonIndexArray...%@", _buttonIndexArray);
+    [_selectedConditionIndexArray setObject:indexStr atIndexedSubscript:_currentSelectedTitleButtonIndex];
     
-//    [_buttonIndexArray setObject:index atIndexedSubscript:_buttonSelectedIndex];
-//    [self returnSelectedLeftIndex:first RightIndex:second];
+    NSInteger clickedButtonIndex = _lastClickedButton.tag-kViewTagAdd;
+    
+    NSArray *leftStringArray  = [_dataSourceLeftArray objectAtIndex:clickedButtonIndex];
+    NSString *leftString  = @"";
+    if (leftStringArray.count > 0) {  // 二级菜单
+        // 二级菜单 一级内容
+        leftString = [leftStringArray objectAtIndex:leftIndex];
+    }
+    NSArray *rightArray  = [_dataSourceRightArray objectAtIndex:clickedButtonIndex];
+    NSArray *rightStringArray= [rightArray objectAtIndex:leftIndex];
+    
+    // 分类内容
+    NSString *rightString = [rightStringArray objectAtIndex:rightIndex];
+
+    // 文字长度太长  进行字符串截取
+//    if(rightString.length>5){
+//        rightString=[NSString stringWithFormat:@"%@...",[rightString substringToIndex:4]];
+//    }
+    
+    // 选中条件后  标题分类改变
+    [self changeButtonTitleWithString:rightString];
+    
+    // 走代理 或者 block  处理选中条件后的业务逻辑
+    if (self.delegate && [self.delegate respondsToSelector:@selector(multistageDropdownMenuView:selecteTitleButtonIndex:conditionLeftIndex:conditionRightIndex:)]) {
+        [self.delegate multistageDropdownMenuView:self selecteTitleButtonIndex:clickedButtonIndex conditionLeftIndex:leftIndex conditionRightIndex:rightIndex];
+    }
+    
+    NSMutableArray *currentTitleArray = [NSMutableArray arrayWithCapacity:self.titleButtonArray.count];
+    NSArray *btnArr = self.titleButtonArray;
+    for (UIButton *btn in btnArr) {
+        [currentTitleArray addObject:btn.titleLabel.text];
+    }
+    NSString *currentTitle = [currentTitleArray objectAtIndex:clickedButtonIndex];
+    // 走代理 或者 block  处理选中条件后的业务逻辑
+    if (self.delegate && [self.delegate respondsToSelector:@selector(multistageDropdownMenuView:selectTitleButtonWithCurrentTitle:currentTitleArray:)]) {
+        [self.delegate multistageDropdownMenuView:self selectTitleButtonWithCurrentTitle:currentTitle currentTitleArray:currentTitleArray];
+    }
+    
+}
+
+// 选中条件后  标题分类改变
+- (void)changeButtonTitleWithString:(NSString *)str{
+    NSInteger btnTag = _lastClickedButton.tag;
+    UIButton *button = (UIButton *)[self viewWithTag:btnTag];
+    [button setTitle:str forState:UIControlStateNormal];
+    
+    
+    [button setTitleColor:CF_Color_MainColor forState:UIControlStateNormal];
+    button.titleLabel.font = CF_BOLDFont_15;
+    [button setImage:[UIImage imageNamed:@"天蓝箭头"] forState:UIControlStateNormal];
 }
 
 #pragma mark - title按钮点击
@@ -164,29 +227,36 @@
     
     // 移除子控件
     [self removeSubviews];
-//    self.showTitleArray = self.dataSourceArr[btn.tag-kViewTagAdd];
+
     
-    // 加上 选择内容
+    // 显示下拉
     [self showConditionTableViewWhenClickedButton:btn];
     // 按钮箭头动画
     [self animationWhenClickTitleButton:btn];
 }
 
+
+
 #pragma mark --
+// 点击 title 按钮 后
 - (void)showConditionTableViewWhenClickedButton:(UIButton *)btn {
-    [self.superview addSubview:self.backgroundView];
+    [self.superview insertSubview:self.backgroundView atIndex:0];
     [self.superview addSubview:self.multistageConditionTableView];
     
-    //..
-//    [];
+    _currentSelectedTitleButtonIndex = btn.tag - kViewTagAdd;
     
-    [UIView animateWithDuration:0.25 animations:^{
-        //        self.multistageConditionTableView.frame = CGRectMake(0, self.startY, CFScreenWidth, MIN(44 * 5, 44 * self.dataSource.count));
-        self.multistageConditionTableView.frame = CGRectMake(0, self.startY, CFScreenWidth, 44 * 5);
-        
-    } completion:^(BOOL finished) {
-        //        [self.multistageConditionTableView reloadData];
-    }];
+    // @"3-0"(二级, -左边不一定为0)  /   @"0-0"(一级,  -左边一定为0)   /   @"0-3"
+    NSString *currentSelectedIndexStr = [_selectedConditionIndexArray objectAtIndex:_currentSelectedTitleButtonIndex];
+    
+    NSArray *arr = [currentSelectedIndexStr componentsSeparatedByString:@"-"];
+    NSInteger leftIndex = [[arr objectAtIndex:0] integerValue];
+    NSInteger rightIndex = [[arr objectAtIndex:1] integerValue];
+    
+    //  根据 选中状态  下拉显示tableView
+    [self.multistageConditionTableView showTableViewWithSelectedTitleIndex:_currentSelectedTitleButtonIndex selectedLeftIndex:leftIndex selectedRightIndex:rightIndex];
+    
+    
+    
 }
 // 点击按钮箭头动画
 - (void)animationWhenClickTitleButton:(UIButton *)btn
@@ -208,6 +278,16 @@
             }];
         }
     }
+    
+    // multistageConditionTableView动画
+    //[UIView animateWithDuration:0.25 animations:^{
+        //        self.multistageConditionTableView.frame = CGRectMake(0, self.startY, CFScreenWidth, MIN(44 * 5, 44 * self.dataSource.count));
+        //self.multistageConditionTableView.frame = CGRectMake(0, self.startY, CFScreenWidth, 44 * 5);
+        
+    //} completion:^(BOOL finished) {
+        //        [self.multistageConditionTableView reloadData];
+    //}];
+    
 }
 
 
@@ -237,6 +317,14 @@
         UIButton *btn = self.titleButtonArray[i];
         btn.enabled = YES;
     }
+}
+
+- (void)hide
+{
+    [self.backgroundView removeFromSuperview];
+    [self.multistageConditionTableView hide];
+    
+    [self buttonEnable];
 }
 
 @end

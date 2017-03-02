@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A06ACF11E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8A06ACF01E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle */; };
 		8AB2C6EB1E65175E0018E74E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2C6EA1E65175E0018E74E /* main.m */; };
 		8AB2C6EE1E65175E0018E74E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2C6ED1E65175E0018E74E /* AppDelegate.m */; };
 		8AB2C6F11E65175E0018E74E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2C6F01E65175E0018E74E /* ViewController.m */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8A06ACF01E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CFMultistageDropdownMenuView.bundle; sourceTree = "<group>"; };
 		8AB2C6E61E65175E0018E74E /* CFMultistageDropdownMenuView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CFMultistageDropdownMenuView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AB2C6EA1E65175E0018E74E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8AB2C6EC1E65175E0018E74E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 		8AB2C6E81E65175E0018E74E /* CFMultistageDropdownMenuView */ = {
 			isa = PBXGroup;
 			children = (
+				8A06ACF01E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle */,
 				8AB2C7011E6519150018E74E /* Lib */,
 				8AB2C7001E6519150018E74E /* demo */,
 				8AB2C6EC1E65175E0018E74E /* AppDelegate.h */,
@@ -175,6 +178,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A06ACF11E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle in Resources */,
 				8AB2C6F91E65175E0018E74E /* LaunchScreen.storyboard in Resources */,
 				8AB2C6F61E65175E0018E74E /* Assets.xcassets in Resources */,
 				8AB2C6F41E65175E0018E74E /* Main.storyboard in Resources */,
