@@ -200,22 +200,28 @@
     
     NSArray *leftStringArray  = [_dataSourceLeftArray objectAtIndex:clickedButtonIndex];
     NSString *leftString  = @"";
-    if (leftStringArray.count > 0) {  // 二级菜单
-        // 二级菜单 一级内容
-        leftString = [leftStringArray objectAtIndex:leftIndex];
-    }
     NSArray *rightArray  = [_dataSourceRightArray objectAtIndex:clickedButtonIndex];
     NSArray *rightStringArray= [rightArray objectAtIndex:leftIndex];
     
     // 分类内容
     NSString *rightString = [rightStringArray objectAtIndex:rightIndex];
-
-
     
     // 选中条件后  标题分类改变
     [self changeButtonTitleWithString:rightString];
     
-    // 走代理 或者 block  处理选中条件后的业务逻辑
+    // 特殊处理  当下拉菜单为 二级菜单    二级菜单的"全部"  标题栏展示 一级菜单内容 (更合理直观)
+    if (leftStringArray.count > 0) {  // 二级菜单
+        // 二级菜单 一级内容
+        leftString = [leftStringArray objectAtIndex:leftIndex];
+        //
+        if ([rightString isEqualToString:@"全部"]) {
+            NSInteger btnTag = _lastClickedButton.tag;
+            UIButton *button = (UIButton *)[self viewWithTag:btnTag];
+            [button setTitle:leftString forState:UIControlStateNormal];
+        }
+    }
+    
+    // 走代理   处理选中条件后的业务逻辑
     if (self.delegate && [self.delegate respondsToSelector:@selector(multistageDropdownMenuView:selecteTitleButtonIndex:conditionLeftIndex:conditionRightIndex:)]) {
         [self.delegate multistageDropdownMenuView:self selecteTitleButtonIndex:clickedButtonIndex conditionLeftIndex:leftIndex conditionRightIndex:rightIndex];
     }
@@ -226,7 +232,7 @@
         [currentTitleArray addObject:btn.titleLabel.text];
     }
     NSString *currentTitle = [currentTitleArray objectAtIndex:clickedButtonIndex];
-    // 走代理 或者 block  处理选中条件后的业务逻辑
+    // 走代理  处理选中条件后的业务逻辑
     if (self.delegate && [self.delegate respondsToSelector:@selector(multistageDropdownMenuView:selectTitleButtonWithCurrentTitle:currentTitleArray:)]) {
         [self.delegate multistageDropdownMenuView:self selectTitleButtonWithCurrentTitle:currentTitle currentTitleArray:currentTitleArray];
     }
@@ -256,9 +262,11 @@
         btnTitleColor = CF_Color_MainColor;
     }
 
-    
     [button setTitleColor:btnTitleColor forState:UIControlStateNormal];
     [button setImage:[UIImage imageNamed:btnImageName] forState:UIControlStateNormal];
+    
+    
+    
 }
 
 #pragma mark - title按钮点击

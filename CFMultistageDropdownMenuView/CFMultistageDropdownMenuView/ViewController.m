@@ -23,7 +23,7 @@
     [super viewDidLoad];
     
     self.automaticallyAdjustsScrollViewInsets = NO;
-    self.view.backgroundColor = [UIColor purpleColor];
+    self.view.backgroundColor = [UIColor lightGrayColor];
     
     // 配置展示结果talbeview
 //    [self.view addSubview:self.showTableView];
