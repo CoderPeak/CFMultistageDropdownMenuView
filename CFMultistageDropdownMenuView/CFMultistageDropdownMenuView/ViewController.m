@@ -177,7 +177,7 @@
     NSString *str = [NSString stringWithFormat:@"当前选中的是 \"%@\" \n 当前展示的所有条件是:\n (%@)",currentTitle, mStr];
     
 
-     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"第二几个代理方法" message:str preferredStyle:UIAlertControllerStyleAlert];
+     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"第二个代理方法" message:str preferredStyle:UIAlertControllerStyleAlert];
     [self presentViewController:alertController animated:NO completion:^{
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             

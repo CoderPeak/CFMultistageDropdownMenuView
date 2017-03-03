@@ -12,8 +12,10 @@
 @protocol CFMultistageDropdownMenuViewDelegate <NSObject>
 
 @optional
+// 能得到 当前选中的是第几个titleButton(即第几个分类下的条件) / 一级菜单 当前选中的索引和内容 / 二级菜单 当前选中的索引和内容
 - (void)multistageDropdownMenuView:(CFMultistageDropdownMenuView *)multistageDropdownMenuView selecteTitleButtonIndex:(NSInteger)titleButtonIndex conditionLeftIndex:(NSInteger)leftIndex conditionRightIndex:(NSInteger)rightIndex;
 
+// 能得到 当前选中的 内容 /  整个titleBar上 所有展示的内容
 - (void)multistageDropdownMenuView:(CFMultistageDropdownMenuView *)multistageDropdownMenuView selectTitleButtonWithCurrentTitle:(NSString *)currentTitle currentTitleArray:(NSArray *)currentTitleArray;
 
 @end
