@@ -127,7 +127,7 @@
 {
     self.titleButtonArray = [[NSMutableArray alloc] init];
     
-    CGFloat btnW = CFScreenWidth/defaulTitleArray.count;
+    CGFloat btnW = CFScreenWidth/defaulTitleArray.count;  // -6 留下左边间距
     CGFloat btnH = 45;
     
     // 选中的条件  左 右 索引数组
@@ -135,9 +135,10 @@
     
     for (NSInteger i=0; i<defaulTitleArray.count; i++) {
         
-        CFLabelOnLeftButton *titleBtn = nil;
-        
-        titleBtn = [CFLabelOnLeftButton createButtonWithImageName:CFDrowMenuViewSrcName(@"灰箭头.png")?:CFDrowMenuViewFrameworkSrcName(@"灰箭头.png") title:@"" titleColor:CF_Color_TextDarkGrayColor frame:CGRectMake(i*btnW, 0, btnW, btnH) target:self action:@selector(titleButtonClicked:)];
+ 
+        CFLabelOnLeftButton *titleBtn = [CFLabelOnLeftButton createButtonWithImageName:@"" title:@"" titleColor:CF_Color_TextBlackColor frame:CGRectMake(i*btnW+3, 0, btnW-6, btnH) target:self action:@selector(titleButtonClicked:)];
+       
+        titleBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         [titleBtn setTitle:defaulTitleArray[i] forState:UIControlStateNormal];
         titleBtn.tag = i + kViewTagAdd;  // 所有tag都加上这个, 防止出现为0的tag
         
@@ -158,6 +159,33 @@
         [self.titleBar addSubview:line];
     }
 }
+
+- (void)setStateConfigDict:(NSDictionary *)stateConfigDict
+{
+    _stateConfigDict = stateConfigDict;
+    
+    NSString *btnImageName = @"";
+    UIColor *btnTitleColor = nil;
+    if (self.stateConfigDict[@"normal"]) {
+        btnImageName = self.stateConfigDict[@"normal"][1];
+        btnTitleColor = self.stateConfigDict[@"normal"][0];
+        if (!btnImageName) {
+            // 使用CFMultistageDropdownMenuView.bundle自带的
+            NSString *str = [NSString stringWithFormat:@"%@.png", self.stateConfigDict[@"normal"][1]];
+            btnImageName = CFMultistageDropdownMenuViewSrcName(str)?:CFMultistageDropdownMenuViewFrameworkSrcName(str);
+        }
+    } else {
+        // 默认的
+        btnImageName = CFMultistageDropdownMenuViewSrcName(@"灰箭头.png")?:CFMultistageDropdownMenuViewFrameworkSrcName(@"灰箭头.png");
+        btnTitleColor = CF_Color_TextBlackColor;
+    }
+    for (UIButton *btn in self.titleButtonArray) {
+        [btn setTitleColor:btnTitleColor forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:btnImageName] forState:UIControlStateNormal];
+    }
+    
+}
+
 #pragma mark - CFMultistageConditionTableViewDelegate
 // 最终选中
 - (void)selecteWithLeftIndex:(NSInteger)leftIndex right:(NSInteger)rightIndex
@@ -182,10 +210,7 @@
     // 分类内容
     NSString *rightString = [rightStringArray objectAtIndex:rightIndex];
 
-    // 文字长度太长  进行字符串截取
-//    if(rightString.length>5){
-//        rightString=[NSString stringWithFormat:@"%@...",[rightString substringToIndex:4]];
-//    }
+
     
     // 选中条件后  标题分类改变
     [self changeButtonTitleWithString:rightString];
@@ -213,11 +238,27 @@
     NSInteger btnTag = _lastClickedButton.tag;
     UIButton *button = (UIButton *)[self viewWithTag:btnTag];
     [button setTitle:str forState:UIControlStateNormal];
-    
-    
-    [button setTitleColor:CF_Color_MainColor forState:UIControlStateNormal];
     button.titleLabel.font = CF_BOLDFont_15;
-    [button setImage:[UIImage imageNamed:@"天蓝箭头"] forState:UIControlStateNormal];
+    
+    
+    NSString *btnImageName = @"";
+    UIColor *btnTitleColor = nil;
+    if (self.stateConfigDict[@"selected"]) {
+        btnImageName = self.stateConfigDict[@"selected"][1];
+        btnTitleColor = self.stateConfigDict[@"selected"][0];
+        
+        btnImageName = [NSString stringWithFormat:@"%@.png", self.stateConfigDict[@"selected"][1]];
+       
+        
+    } else {
+        // 使用CFMultistageDropdownMenuView.bundle自带的
+        btnImageName = CFMultistageDropdownMenuViewSrcName(@"天蓝箭头.png")?:CFMultistageDropdownMenuViewFrameworkSrcName(@"天蓝箭头.png");
+        btnTitleColor = CF_Color_MainColor;
+    }
+
+    
+    [button setTitleColor:btnTitleColor forState:UIControlStateNormal];
+    [button setImage:[UIImage imageNamed:btnImageName] forState:UIControlStateNormal];
 }
 
 #pragma mark - title按钮点击
@@ -233,6 +274,11 @@
     [self showConditionTableViewWhenClickedButton:btn];
     // 按钮箭头动画
     [self animationWhenClickTitleButton:btn];
+    
+    //
+    //[UIView animateWithDuration:0.25 animations:^{
+       // _lastClickedButton.imageView.transform = CGAffineTransformMakeRotation(0.01);
+    //}];
 }
 
 
@@ -262,40 +308,28 @@
 - (void)animationWhenClickTitleButton:(UIButton *)btn
 {
  
-    _lastClickedButton = btn;
    
     for (UIButton *subBtn in self.titleButtonArray) {
         if (subBtn==btn) {
             [UIView animateWithDuration:0.25 animations:^{
                 subBtn.imageView.transform = CGAffineTransformMakeRotation(M_PI);
-                subBtn.enabled = NO;
+                subBtn.userInteractionEnabled = NO;
             }];
             
         } else {
             [UIView animateWithDuration:0.25 animations:^{
                 subBtn.imageView.transform = CGAffineTransformMakeRotation(0);
-                subBtn.enabled = YES;
+                subBtn.userInteractionEnabled = YES;
             }];
         }
     }
-    
-    // multistageConditionTableView动画
-    //[UIView animateWithDuration:0.25 animations:^{
-        //        self.multistageConditionTableView.frame = CGRectMake(0, self.startY, CFScreenWidth, MIN(44 * 5, 44 * self.dataSource.count));
-        //self.multistageConditionTableView.frame = CGRectMake(0, self.startY, CFScreenWidth, 44 * 5);
-        
-    //} completion:^(BOOL finished) {
-        //        [self.multistageConditionTableView reloadData];
-    //}];
     
 }
 
 
 - (void)removeSubviews
 {
-    [UIView animateWithDuration:0.25 animations:^{
-        _lastClickedButton.imageView.transform = CGAffineTransformMakeRotation(0.01);
-    }];
+    
     // 此处 千万不能写作 !self.backgroundView?:[self.backgroundView removeFromSuperview];  会崩
     !_backgroundView?:[_backgroundView removeFromSuperview];
     _backgroundView=nil;
@@ -305,18 +339,6 @@
     
     self.showTitleArray = nil;
     
-    
-    // 按钮恢复点击
-    [self buttonEnable];
-}
-// 按钮恢复点击
-- (void)buttonEnable
-{
-    // 所有 分类按钮  都变为 可点击
-    for (NSInteger i=0; i<self.defaulTitleArray.count; i++) {
-        UIButton *btn = self.titleButtonArray[i];
-        btn.enabled = YES;
-    }
 }
 
 - (void)hide
@@ -324,7 +346,12 @@
     [self.backgroundView removeFromSuperview];
     [self.multistageConditionTableView hide];
     
-    [self buttonEnable];
+    [UIView animateWithDuration:0.25 animations:^{
+        _lastClickedButton.imageView.transform = CGAffineTransformMakeRotation(0);
+        _lastClickedButton.userInteractionEnabled = YES;
+    }];
+    
+
 }
 
 @end

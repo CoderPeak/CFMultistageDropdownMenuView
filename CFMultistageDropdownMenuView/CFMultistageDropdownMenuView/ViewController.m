@@ -103,6 +103,10 @@
     _multistageDropdownMenuView.startY = CGRectGetMaxY(_multistageDropdownMenuView.frame);
     
 //    _multistageDropdownMenuView.maxRowCount = 3;
+    _multistageDropdownMenuView.stateConfigDict = @{
+//                                         @"selected" : @[[UIColor purpleColor], @"测试紫箭头"],
+//                                         @"normal" : @[[UIColor redColor], @"测试红箭头"]
+                                         };
     
 
     

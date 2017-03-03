@@ -19,7 +19,7 @@
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         
         // 默认设置
-        [self setTitleColor:CF_Color_TextGrayColor forState:UIControlStateNormal];
+        [self setTitleColor:CF_Color_TextBlackColor forState:UIControlStateNormal];
         self.titleLabel.font = CF_Font_15;
         
         

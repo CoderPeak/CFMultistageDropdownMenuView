@@ -12,8 +12,9 @@
 /**
  *  资源图片路径相关 宏
  */
-#define CFDrowMenuViewSrcName(file) [@"CFDropDownMenuView.bundle" stringByAppendingPathComponent:file]
-#define CFDrowMenuViewFrameworkSrcName(file) [@"Frameworks/CFDropDownMenuView.framework/CFDropDownMenuView.bundle" stringByAppendingPathComponent:file]
+#define CFMultistageDropdownMenuViewSrcName(file) [@"CFMultistageDropdownMenuView.bundle" stringByAppendingPathComponent:file]
+// 当支持cocoapods导入时的图片资源路径
+#define CFMultistageDropdownMenuViewFrameworkSrcName(file) [@"Frameworks/CFMultistageDropdownMenuView.framework/CFMultistageDropdownMenuView.bundle" stringByAppendingPathComponent:file]
 
 /**
  *  颜色相关 宏

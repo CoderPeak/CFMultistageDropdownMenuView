@@ -52,6 +52,19 @@
 /* 最大展示行数 -- 不传-默认6条 */
 @property (nonatomic, assign) NSInteger maxRowCount;
 
+/* 选中状态和未选中状态
+ * 默认  选中状态:天蓝文字,天蓝箭头
+ *      未选中状态:黑文字,灰箭头
+ * 使用注意: 参数格式
+ @{
+ @"selected" : @[[UIColor BlueColor], @"蓝箭头"],  // 选中状态
+ @"normal" : @[[UIColor BlackColor], @"黑箭头"]  // 未选中状态
+ };
+ 可以不传 / 也可以只传其中一对键值对 / 也可以都传 (key必须为@"selected"  @"normal")
+ */
+@property (nonatomic, strong) NSDictionary *stateConfigDict;
+
+
 /* 代理 */
 @property (nonatomic, weak) id<CFMultistageDropdownMenuViewDelegate> delegate;
 
