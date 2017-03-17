@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F04F3861E7B95C800F872D3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F04F3851E7B95C800F872D3 /* ViewController.m */; };
 		8A06ACF11E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8A06ACF01E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle */; };
 		8AB2C6EB1E65175E0018E74E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2C6EA1E65175E0018E74E /* main.m */; };
 		8AB2C6EE1E65175E0018E74E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2C6ED1E65175E0018E74E /* AppDelegate.m */; };
-		8AB2C6F11E65175E0018E74E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2C6F01E65175E0018E74E /* ViewController.m */; };
 		8AB2C6F41E65175E0018E74E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AB2C6F21E65175E0018E74E /* Main.storyboard */; };
 		8AB2C6F61E65175E0018E74E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AB2C6F51E65175E0018E74E /* Assets.xcassets */; };
 		8AB2C6F91E65175E0018E74E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AB2C6F71E65175E0018E74E /* LaunchScreen.storyboard */; };
@@ -21,13 +21,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5F04F3841E7B95C800F872D3 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		5F04F3851E7B95C800F872D3 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		8A06ACF01E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CFMultistageDropdownMenuView.bundle; sourceTree = "<group>"; };
 		8AB2C6E61E65175E0018E74E /* CFMultistageDropdownMenuView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CFMultistageDropdownMenuView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AB2C6EA1E65175E0018E74E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8AB2C6EC1E65175E0018E74E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8AB2C6ED1E65175E0018E74E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		8AB2C6EF1E65175E0018E74E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ViewController.h; path = ../ViewController.h; sourceTree = "<group>"; };
-		8AB2C6F01E65175E0018E74E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ViewController.m; path = ../ViewController.m; sourceTree = "<group>"; };
 		8AB2C6F31E65175E0018E74E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8AB2C6F51E65175E0018E74E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8AB2C6F81E65175E0018E74E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -73,9 +73,10 @@
 		8AB2C6E81E65175E0018E74E /* CFMultistageDropdownMenuView */ = {
 			isa = PBXGroup;
 			children = (
+				5F04F3841E7B95C800F872D3 /* ViewController.h */,
+				5F04F3851E7B95C800F872D3 /* ViewController.m */,
 				8A06ACF01E67B834005E57A5 /* CFMultistageDropdownMenuView.bundle */,
 				8AB2C7011E6519150018E74E /* Lib */,
-				8AB2C7001E6519150018E74E /* demo */,
 				8AB2C6EC1E65175E0018E74E /* AppDelegate.h */,
 				8AB2C6ED1E65175E0018E74E /* AppDelegate.m */,
 				8AB2C6F21E65175E0018E74E /* Main.storyboard */,
@@ -93,15 +94,6 @@
 				8AB2C6EA1E65175E0018E74E /* main.m */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		8AB2C7001E6519150018E74E /* demo */ = {
-			isa = PBXGroup;
-			children = (
-				8AB2C6EF1E65175E0018E74E /* ViewController.h */,
-				8AB2C6F01E65175E0018E74E /* ViewController.m */,
-			);
-			path = demo;
 			sourceTree = "<group>";
 		};
 		8AB2C7011E6519150018E74E /* Lib */ = {
@@ -192,8 +184,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F04F3861E7B95C800F872D3 /* ViewController.m in Sources */,
 				8AB2C70E1E6558530018E74E /* CFMultistageConditionTableView.m in Sources */,
-				8AB2C6F11E65175E0018E74E /* ViewController.m in Sources */,
 				8AB2C70B1E651BC10018E74E /* UIView+CFFrame.m in Sources */,
 				8AB2C6EE1E65175E0018E74E /* AppDelegate.m in Sources */,
 				8AB2C7041E651A3F0018E74E /* CFMultistageDropdownMenuView.m in Sources */,
